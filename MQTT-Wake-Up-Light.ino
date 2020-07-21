@@ -4,7 +4,8 @@
  *  home automation server, allowing more flexibility in alarm programming and adaptability of use in
  *  lighting "scenes" as well as integration with other home automation controls sucj as Google Home 
  *  and Amazon Alexa.
- *  This implementation also lowers the component count by removing the need for an onboard RTC. 
+ *  This implementation also lowers the component count by removing the need for an RTC. 
+ *  
  *  Many thanks to all the folks out there who make videos, create libraries, and post tutorials to help us "noobs".
  *  
  *  Some of the sites that made this project possible include:
@@ -54,6 +55,19 @@ void setup() {
  
   versPrint();
 
+  /*** Setup the Input pins and button actions ***/
+  pinMode(BUTTON_PIN_1, INPUT_PULLUP);
+  pinMode(BUTTON_PIN_2, INPUT_PULLUP);
+  
+  button1.setClick(manualPos);
+  button1.setDoubleClick(allOn);
+  button2.setClick(manualNeg);
+  button2.setDoubleClick(allOff);
+
+  /*** Setup the LED pins as outputs ***/
+  pinMode(pulsePinR, OUTPUT);
+  pinMode(pulsePinB, OUTPUT);
+  
   wifiSetup();
   mqttSetup();
 }
@@ -63,11 +77,11 @@ void setup() {
 
 void loop() {
   button1.isClick();
-  delay(10);
+  delay(0);
   button2.isClick();
-  delay(10);
+  delay(0);
   mqttLoop();
-  delay(200);
+  delay(20);
 }
 
 
@@ -76,6 +90,7 @@ void loop() {
 void manualNeg() {
   manualSetting--;
   delay(10);
+  Serial.println("Lower Manual Setting");
   manualSet();
   delay(10);
 }
@@ -83,6 +98,7 @@ void manualNeg() {
 void manualPos() {
   manualSetting++;
   delay(10);
+  Serial.println("Raise Manual Setting");
   manualSet();
   delay(10);
 }
@@ -158,6 +174,7 @@ manualSet();
 /*** Turn off the light ***/
 void allOff(){
   manualSetting = 0;
+  Serial.println("All Off");
   delay(10);
   manualSet();
 }
@@ -165,6 +182,7 @@ void allOff(){
 /*** Turn On the light ***/
 void allOn(){
   manualSetting = 5;
+  Serial.println("All On");
   delay(10);
   manualSet();
 }
@@ -175,13 +193,12 @@ void allOn(){
 //Announce Version
 void versPrint(){
   Serial.println();
-  Serial.println("MQTTWakeLight v0.1.1");
+  Serial.println("MQTTWakeLight v0.1.1 (Manual Test Only)");
   Serial.println();
 }
 /* Version notes:
  v0.1.0   ESP32 & MQTT implementation of ESPWakeLight v1.0.3
      .1   Moved all Wifi and MQTT functions to seperate tab
-          Moved secrets to seperate tab
             
             
             
