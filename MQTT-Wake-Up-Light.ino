@@ -2,16 +2,18 @@
  *  LED light to help people wake up easier in windowless bedrooms or other situations where 
  *  circadian lighting is desired. The intended use is for it to be controlled by a Home Assistant 
  *  home automation server, allowing more flexibility in alarm programming and adaptability of use in
- *  lighting "scenes" as well as integration with other home automation controls sucj as Google Home 
+ *  lighting "scenes" as well as integration with other home automation controls such as Google Home 
  *  and Amazon Alexa.
  *  This implementation also lowers the component count by removing the need for an RTC. 
  *  
  *  Many thanks to all the folks out there who make videos, create libraries, and post tutorials to help us "noobs".
  *  
- *  Some of the sites that made this project possible include:
+ *  Some of the sites that made the transition of this project possible include:
  *  
  *  Playful Technology  https://www.youtube.com/watch?v=VSwu-ZYiTxg&t=1680s
  *  Rui Santos  https://randomnerdtutorials.com
+ *  GeekToolkit   https://youtu.be/EWLJ1CASCp8
+ *  The Hook Up   https://youtu.be/NjKK5ab0-Kk
 */
 
 #include <ButtonKing.h>
@@ -193,7 +195,7 @@ void allOn(){
 //Announce Version
 void versPrint(){
   Serial.println();
-  Serial.println("MQTTWakeLight v0.1.1 (Manual Test Only)");
+  Serial.println("MQTTWakeLight v0.1.1");
   Serial.println();
 }
 /* Version notes:
