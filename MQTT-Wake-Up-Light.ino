@@ -2,18 +2,16 @@
  *  LED light to help people wake up easier in windowless bedrooms or other situations where 
  *  circadian lighting is desired. The intended use is for it to be controlled by a Home Assistant 
  *  home automation server, allowing more flexibility in alarm programming and adaptability of use in
- *  lighting "scenes" as well as integration with other home automation controls such as Google Home 
+ *  lighting "scenes" as well as integration with other home automation controls sucj as Google Home 
  *  and Amazon Alexa.
  *  This implementation also lowers the component count by removing the need for an RTC. 
  *  
  *  Many thanks to all the folks out there who make videos, create libraries, and post tutorials to help us "noobs".
  *  
- *  Some of the sites that made the transition of this project possible include:
+ *  Some of the sites that made this project possible include:
  *  
  *  Playful Technology  https://www.youtube.com/watch?v=VSwu-ZYiTxg&t=1680s
  *  Rui Santos  https://randomnerdtutorials.com
- *  GeekToolkit   https://youtu.be/EWLJ1CASCp8
- *  The Hook Up   https://youtu.be/NjKK5ab0-Kk
 */
 
 #include <ButtonKing.h>
@@ -106,6 +104,8 @@ void manualPos() {
 }
 
 void manualSet() {
+  manualSetting = constrain(manualSetting, 0, 5);
+  publishMan();
     switch (manualSetting) {
       case 0:
         ledcWrite(0, 0);
@@ -131,12 +131,13 @@ void manualSet() {
         ledcWrite(0, 250);
         ledcWrite(1, 250);
         break;
-      default:    
+      default:
+        manualSetting = 0;    
         ledcWrite(0, 0);
         ledcWrite(1, 0);
-        manualSetting = 0;
+        break;
+    delay(5);
     }
-    
 }
 
 /**************************************** LED Automation Functions  ******************************************/
@@ -169,8 +170,8 @@ void fadeUpB(){
     ledcWrite(0, 255);
     brightnessB = 255;
   }    
-manualSetting = 5;
-manualSet();
+delay(5);
+allOn();
 }
 
 /*** Turn off the light ***/
@@ -195,12 +196,13 @@ void allOn(){
 //Announce Version
 void versPrint(){
   Serial.println();
-  Serial.println("MQTTWakeLight v0.1.1");
+  Serial.println("MQTTWakeLight v0.1.2");
   Serial.println();
 }
 /* Version notes:
  v0.1.0   ESP32 & MQTT implementation of ESPWakeLight v1.0.3
      .1   Moved all Wifi and MQTT functions to seperate tab
+     .2   Added publishing of manual setting and constrained manualSetting var
             
             
             
