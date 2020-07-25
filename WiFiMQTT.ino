@@ -18,16 +18,16 @@ const char* ssid = "";                               // Wifi SSID
 const char* wifiPassword = "";                        // Wifi Password, if required.
 
 //MQTT broker config
-const IPAddress mqttServerIP(10, 0, 0, 99);           //IP address of the device running your broker
+const IPAddress mqttServerIP(192, 168, 0, 99);        //Change to the IP address of the device running your broker
 const char* mqttServerName = "";                    
 const char* username = "";                            // If you have set your broker to require a user and password
 const char* mqttPassword = "";                        // set them here. Otherwise, leave the "" empty.
 unsigned int mqttPort = 1883;                         // Port 1883 is the default used by many MQTT apps, but you may need to change
                                                       // this if your network already uses this port for something else.
 //MQTT client config
-const char* deviceID = "wakeUpLight";                  // Unique device name for this client. For connection to broker 
+const char* deviceID = "wakeUpLight";                  // Unique device name for this client. For connection to broker
                                                        // and as a topic name for messages bound for this device. Example: "ESP32_humidity_sensor"
-const IPAddress deviceIP(10, 0, 0, 131);               // Set a static IP address for the client device
+const IPAddress deviceIP(192, 168, 0, 131);            // Set a static IP address for the client device
 
 // Global Variables
 
@@ -194,4 +194,11 @@ void mqttLoop() {
 void publish(char* message) {
   snprintf(topic, 32, "ToHost/%s", deviceID);
   MQTTclient.publish(topic, message);
+}
+
+/***********************************************************************************************************/
+void publishMan() {
+  snprintf(topic, 32, "ToBroker/%s/Manual", deviceID);         // This function sets up a sub-subtopic called "Manual" of the previous subtopic
+  snprintf(msg, 16, "%i", manualSetting);                      // This sets the message to the value of the variable manualSetting 
+  MQTTclient.publish(topic, msg);                              // Here we publish the message to the sub-subtopic
 }
