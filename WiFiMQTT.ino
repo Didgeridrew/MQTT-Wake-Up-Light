@@ -13,21 +13,21 @@
 
 //Constants
 
-//WiFi user config. Change these to fit your home network.
-const char* ssid = "";                               // Wifi SSID
-const char* wifiPassword = "";                        // Wifi Password, if required.
+//WiFi user config. Change these to fit your home network. (I moved this to a secrets file)
+//const char* ssid = "";                              // Wifi SSID
+//const char* wifiPassword = "";                      // Wifi Password, if required.
 
 //MQTT broker config
-const IPAddress mqttServerIP(192, 168, 0, 99);        //Change to the IP address of the device running your broker
-const char* mqttServerName = "";                    
-const char* username = "";                            // If you have set your broker to require a user and password
-const char* mqttPassword = "";                        // set them here. Otherwise, leave the "" empty.
+const IPAddress mqttServerIP(10, 0, 0, 99);           //IP address of the device running your broker
+//const char* mqttServerName = "";                    // (I moved all this to a secrets file)
+//const char* username = "";                          // If you have set your broker to require a user and password
+//const char* mqttPassword = "";                      // set them here. Otherwise, leave the "" empty.
 unsigned int mqttPort = 1883;                         // Port 1883 is the default used by many MQTT apps, but you may need to change
                                                       // this if your network already uses this port for something else.
 //MQTT client config
-const char* deviceID = "wakeUpLight";                  // Unique device name for this client. For connection to broker
+const char* deviceID = "wakeUpLight";                  // Unique device name for this client. For connection to broker 
                                                        // and as a topic name for messages bound for this device. Example: "ESP32_humidity_sensor"
-const IPAddress deviceIP(192, 168, 0, 131);            // Set a static IP address for the client device
+const IPAddress deviceIP(10, 0, 0, 131);               // Set a static IP address for the client device
 
 // Global Variables
 
@@ -51,46 +51,72 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
   memcpy(msg, payload, length);                        // Copy the message contents to the msg char[] array
   msg[length] = '\0';                                  // This adds a NULL terminator to the message for correct string formatting
 
-  Serial.print("Message received in topic [");          // These print to the Arduino serial monitor to let you know if things are 
+  Serial.println();
+  Serial.println("Message received in topic [");          // These print to the Arduino serial monitor to let you know if things are 
   Serial.print(topic);                                  // working properly.
   Serial.print("] ");
   Serial.print(msg);
-
-  /*  In this section we accomplish three important things:
-   *   - Define the messages we want our device to recognize 
-   *   - Check any messages the device received against our definitions 
-   *   - Tell which function from the main sketch to run if we've received a recognizable message
-   *  
-   *  We do that by comparing the string of a received message to a second string, if they are the same 
-   *  (watch out for spelling and capitalization) the strcmp function will output
-   *  a 0 and follow then the commands to jump over to the main sketch function, otherwise it will check the 
-   *  message against the next "if" statment... 
-   *  It is usually advisable to have the last statement (the "else") run the command to turn things off.
-   */
+  Serial.println();
    
   if (strcmp(msg, "on") == 0) {
     allOn();
-    delay(30);
+    Alarm.delay(10);
+    publish("All On");
   }
   else if (strcmp(msg, "fade") == 0) {
     fadeUpR();
-    delay(30);
+    Alarm.delay(10);
+    publish("Start Fade");
+  }
+  else if (strcmp(msg, "candle") == 0) {
+    candleOn();
+    Alarm.delay(10);
+    publish("Start Candle");
   }
   else if (strcmp(msg, "down") == 0) {
-    publish("Light lowered");
-    delay(30);
     manualNeg();
-    delay(30);
+    Alarm.delay(10);
+    publish("Light lowered");
   }
   else if (strcmp(msg, "up") == 0) {
-    publish("Light raised");
-    delay(30);
     manualPos();
-    delay(30);
+    Alarm.delay(10);
+    publish("Light raised");
   }
   else if (strcmp(msg, "off") == 0) {
     allOff();
-    delay(30);
+    Alarm.delay(10);
+    publish("All Off");
+  }
+  else if (strcmp(msg, "0") == 0) {
+    manualSetting = 0;
+    Alarm.delay(10);
+    manualSet();
+  }
+  else if (strcmp(msg, "1") == 0) {
+    manualSetting = 1;
+    Alarm.delay(10);
+    manualSet();
+  }
+  else if (strcmp(msg, "2") == 0) {
+    manualSetting = 2;
+    Alarm.delay(10);
+    manualSet();
+  }  
+  else if (strcmp(msg, "3") == 0) {
+    manualSetting = 3;
+    Alarm.delay(10);
+    manualSet();
+  }      
+  else if (strcmp(msg, "4") == 0) {
+    manualSetting = 4;
+    Alarm.delay(10);
+    manualSet();
+  }
+  else if (strcmp(msg, "5") == 0) {
+    manualSetting = 5;
+    Alarm.delay(10);
+    manualSet();
   }
 }
 
@@ -102,18 +128,18 @@ void wifiSetup() {
     Serial.begin(115200);                                 // start it now.
   }
     
-  delay(30);
+  Alarm.delay(30);
   
   Serial.print("Connecting to ");                         //Attempt to connect to your WiFi network
   Serial.println(ssid);
   WiFi.begin(ssid, wifiPassword);
 
   while (WiFi.status() != WL_CONNECTED) {                 //Show a basic progress couter while waiting for connection
-    delay(500);
+    Alarm.delay(500);
     Serial.print(".");
   }
 
-  delay(2000);                                            //Wait for the connection for complete
+  Alarm.delay(2000);                                            //Wait for the connection for complete
   
   Serial.println("Connected to IP address: ");
   Serial.println(WiFi.localIP());
@@ -122,58 +148,33 @@ void wifiSetup() {
 /**********************************************  mqttSetup  ************************************************/
 /***********************************************************************************************************/
 
-/* Unless you changed the names of the global variables or constants you shouldn't need to change anything here
-*/
-
 void mqttSetup() {
   // Here we define some important settings for the MQTT client
   MQTTclient.setServer(mqttServerIP, mqttPort);
   MQTTclient.setCallback(mqttCallback);
 }
 
-
 /***********************************************  mqttLoop  ************************************************/
 /***********************************************************************************************************/
+
 void mqttLoop() {
   while (!MQTTclient.connected()) {                         // Check whether or not the MQTT server is connected
   Serial.print("Attempting MQTT connection to broker at ");
   Serial.println(mqttServerIP);
   
-
-  /* This section offers a lot of configurization flexibility. Which of these settings you need to use will depend
-   * on how your broker is set up. I have added numerical annotations for each of the following configuration options.
-   * In order for messages to flow properly both the broker and clients need to be looking at the same topics and subtopics. 
-   * 
-   * 
-   * #1. Uncomment this line if you do not have your broker doesn't require user and password.
-   * #2. Uncomment this line if your broker is set to only allow connection of specific users with a password
-   * 
-   * !!! You must uncomment one of the lines mentioned above !!!
-   * 
-   * #3. Your broker must be set up to listen to this topic. For ease of use, set your broker to subscribe to "ToBroker/#" 
-   *     this will make it listen to all subtopics of ToBroker. If you don't like this topic name, you can change it to 
-   *     whatever meets your needs. Just make sure the broker and client topics match.
-   * #4. This is optional, but can be useful if you want to send the same message to all your devices.  
-   *     For example, if you wanted to turn all your devices on or off at once or 
-   *     you need to poll all of your sensors at the same time.
-*/
-  
 // Attempt to connect to MQTT broker
-  
-//#1 if (MQTTclient.connect(deviceID)) {  
 
  if (MQTTclient.connect(mqttServerName, username, mqttPassword)) {
 
     Serial.print("MQTT client connected to broker");
 
-    snprintf(topic, 32, "ToBroker/%s", deviceID);             // #3 This sets up a topic with the subtopic of the device ID for the client to publish to.
-    snprintf(msg, 64, "CONNECT", deviceID);                   // Once connected, this publishes a message to the broker at the specified topic 
-    MQTTclient.publish(topic, msg);                           // with the subtopic of the device ID (for example ToBroker/ESP32_humidity_sensor). 
-                                                              
-    snprintf(topic, 32, "ToDevice/%s", deviceID);             // This sets up a topic with the subtopic of the device ID for the client to subscribe to.
-    MQTTclient.subscribe(topic);                              // This subscribes to the "ToDevice/" topic with the subtopic of the device ID.
+    snprintf(topic, 32, "ToBroker/wakeUpLight");             // #3 This sets up a topic with the subtopic of the device ID for the client to publish to.
+    snprintf(msg, 64, "wakeUpLight CONNECTED to Broker");    // Once connected, this publishes a message to the broker at the specified topic 
+    MQTTclient.publish(topic, msg);                          // with the subtopic of the device ID (for example ToBroker/ESP32_humidity_sensor). 
 
-    MQTTclient.subscribe("ToDevice/All");                     // #4 This subscribes to the "ToDevice/All" topic.
+    MQTTclient.subscribe("ToDevice/wakeUpLight");
+    
+    MQTTclient.subscribe("ToDevice/wakeUpLight/Manual");     // #4 This subscribes to the a specific topic for manual control topic.
  
    }  
    else {
@@ -181,24 +182,35 @@ void mqttLoop() {
     Serial.print(MQTTclient.state());
     Serial.println("try again in 5 seconds");
     
-    delay(5000);                                              // Wait 5 seconds before retrying
+    Alarm.delay(5000);                                              // Wait 5 seconds before retrying
     }
   }
 
   MQTTclient.loop();
 }
 
-/**************************************  Publish Helper function  ******************************************/
+/**************************************  Publish Helper functions  ******************************************/
 /***********************************************************************************************************/
 
 void publish(char* message) {
-  snprintf(topic, 32, "ToHost/%s", deviceID);
+  snprintf(topic, 32, "ToBroker/%s", deviceID);
   MQTTclient.publish(topic, message);
 }
 
-/***********************************************************************************************************/
 void publishMan() {
-  snprintf(topic, 32, "ToBroker/%s/Manual", deviceID);         // This function sets up a sub-subtopic called "Manual" of the previous subtopic
-  snprintf(msg, 16, "%i", manualSetting);                      // This sets the message to the value of the variable manualSetting 
-  MQTTclient.publish(topic, msg);                              // Here we publish the message to the sub-subtopic
+  snprintf(topic, 32, "ToBroker/%s/Manual", deviceID);
+  snprintf(msg, 64, "%i", manualSetting);
+  MQTTclient.publish(topic, msg);
+}
+
+void publishFade() {
+  snprintf(topic, 32, "ToBroker/%s/fadeSet", deviceID);
+  snprintf(msg, 64, fadeSet);
+  MQTTclient.publish(topic, msg);
+}
+
+void publishCandle() {
+  snprintf(topic, 32, "ToBroker/%s/candleSet", deviceID);
+  snprintf(msg, 64, candleSet);
+  MQTTclient.publish(topic, msg);
 }
