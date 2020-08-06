@@ -9,3 +9,11 @@ My main goal for this update was to allow more flexibility in alarm programming 
 
 My secondary goal was to create a MQTT WiFi sketch that I (or others) could drop into future projects. 
 The included WiFiMQTT.ino file does just that.  It is highly commented in a way that I hope makes it useful as an explanatory tool for other MQTT noobs like me.
+
+<br>
+<br>
+<br>
+<br>
+
+# Options
+If you find MQTT or your wLAN to be too unreliable for use as a morning alarm, please take a look at the [Fail-Safe Branch](https://github.com/Didgeridrew/MQTT-Wake-Up-Light/tree/fail-safe) for a version that can use MQTT, but does not rely on it.
