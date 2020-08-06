@@ -18,8 +18,8 @@ important component of their morning alarm. It also solves some issues I had in 
 Incorporating a real time clock module (RTC), network time protocol (NTP), the TimeAlarms library, 
 and the OTA library add the following benefits:
 
-  1. The light alarm function will continue to operate as long as it has power, even if the MQTT server or LAN goes down.
-  2. NTP will get an accurate time whenever the LAN is up and RTC will maintain correct time if the LAN is down.
+  1. The light alarm function will continue to operate as long as it has power, even if the MQTT server or wLAN goes down.
+  2. NTP will get an accurate time whenever the wLAN is up and RTC will maintain correct time if the LAN is down.
   3. DST adjustments are handled automatically by NTP.
   4. OTA allows the user to reprogram the alarm times without removing the microcontroller from the fixture.
   
