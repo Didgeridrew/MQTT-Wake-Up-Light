@@ -29,3 +29,7 @@ and the OTA library into the MQTT-Wake-Up-Light add the following benefits:
   3. DST adjustments are handled automatically by NTP.
   4. OTA allows the user to reprogram the alarm times without removing the microcontroller from the fixture.
   
+
+Next Steps for fail-safe:
+
+  1. Add ability to change alarm times through the webserver without having to completely recompile the binary. 
