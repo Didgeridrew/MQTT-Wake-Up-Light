@@ -20,7 +20,7 @@ version.
 
 # FAIL-SAFE BRANCH
 This branch is meant to cover an edge-case issue where MQTT is not a reliable means of control for someone who relies on this as an
-important component of their morning alarm. It also solves some issues I had in my orignal Arduino Wake-Up-Light project.
+important component of their morning routine. It also solves some issues I had in my orignal Arduino Wake-Up-Light project.
 Incorporating a real time clock module (RTC), network time protocol (NTP), the TimeAlarms library, 
 and the OTA library add the following benefits:
 
