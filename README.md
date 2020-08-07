@@ -22,7 +22,7 @@ version.
 This branch is meant to cover an edge-case issue where MQTT is not a reliable means of control for someone who relies on this as an
 important component of their morning routine. It also solves some issues I had in my orignal Arduino Wake-Up-Light project.
 Incorporating a real time clock module (RTC), network time protocol (NTP), the TimeAlarms library, 
-and the OTA library add the following benefits:
+and the OTA library into the MQTT-Wake-Up-Light add the following benefits:
 
   1. The light alarm function will continue to operate as long as it has power, even if the MQTT server or wLAN goes down.
   2. NTP will get an accurate time whenever the wLAN is up and RTC will maintain correct time if the wLAN is down.
