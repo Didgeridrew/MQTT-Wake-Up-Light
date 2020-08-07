@@ -18,8 +18,6 @@ version.
 <br>
 <br>
 
-# Options
-If you find MQTT or your wLAN to be too unreliable for use as a morning alarm, please take a look at the [Fail-Safe Branch](https://github.com/Didgeridrew/MQTT-Wake-Up-Light/tree/fail-safe) for a version that can use MQTT, but does not rely on it.
 # FAIL-SAFE BRANCH
 This branch is meant to cover an edge-case issue where MQTT is not a reliable means of control for someone who relies on this as an
 important component of their morning alarm. It also solves some issues I had in my orignal Arduino Wake-Up-Light project.
