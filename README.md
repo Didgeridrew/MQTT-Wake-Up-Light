@@ -10,7 +10,7 @@ in the Home Assistant Node-RED integration.
  <br>   * Integrate with home automation controls such as Google Home and Amazon Alexa.
 
 
-This project uses a modified branch of the jled library. In order to create a long fade-up sequence, you must use the modified
+This project uses a [modified branch](https://github.com/Didgeridrew/jled/tree/long_period) of the jled library. In order to create a long fade-up sequence, you must use the modified
 version.
 
 <br>
