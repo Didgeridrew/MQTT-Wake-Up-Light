@@ -6,11 +6,11 @@ time_t syncProvider(){
 }
 
 const char* ntpServer = "pool.ntp.org";
-const long  gmtOffset_sec =  -18000;        // You will need to set this to match your timezone (-18000 = -5GMT = EST)
-const int   daylightOffset_sec = 3600;      // You will need to set this to match how Daylight saving is used in your location
+const long  gmtOffset_sec =  -18000;
+const int   daylightOffset_sec = 3600;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
-/*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-SET FAIL-SAFE ALARM TIMES HERE-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*/
+/*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-SET ALARM TIMES HERE-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*/
 /*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
 int onHour = 5;
 int onMinute = 45;
@@ -33,7 +33,7 @@ void timeSetup() {
       Serial.println("Unable to sync with the RTC");
   else
       Serial.println("RTC has set the system time");     
-  Serial.println();
+    Serial.println();
 }
 
 void instantNTP() {
@@ -47,10 +47,10 @@ void instantAlarms() {
 }
 
 
-/*** Setup hourly call for NTP/RTC print and adjust ***/
+/*** Setup bi-hourly call for NTP/RTC print and adjust ***/
 void hourlyTimer(){
-  Alarm.timerRepeat( 1,0,0, printLocalTime);
-  Serial.println("NTP will Update RTC every hour at this minute");  
+  Alarm.timerRepeat( 2,0,0, instantNTP);
+  Serial.println("NTP will Update RTC every 2 hours at this minute");  
 }
 
 /*** Get time from NTP and adjust RTC to match ***/
