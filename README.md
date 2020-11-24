@@ -26,10 +26,13 @@ and the OTA library into the MQTT-Wake-Up-Light add the following benefits:
 
   1. The light alarm function will continue to operate as long as it has power, even if the MQTT server or wLAN goes down.
   2. NTP will get an accurate time whenever the wLAN is up and RTC will maintain correct time if the wLAN is down.
-  3. DST adjustments are handled automatically by NTP.
+  3. DST adjustments should be handled automatically by NTP. (NOT WORKING)
   4. OTA allows the user to reprogram the alarm times without removing the microcontroller from the fixture.
   
 
 Next Steps for fail-safe:
 
-  1. Add ability to change alarm times through the webserver without having to completely recompile the binary. 
+  1. Fix wifi connection issues:
+    a. After power failure, WiFi fails because modem takes too long to boot.
+    b. WiFi fails randomly and alarm function does not run.
+  2. Add ability to change alarm times through the webserver without having to completely recompile the binary. 
