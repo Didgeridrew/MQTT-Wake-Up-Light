@@ -27,7 +27,7 @@ unsigned int mqttPort = 1883;                         // Port 1883 is the defaul
 //MQTT client config
 const char* deviceID = "wakeUpLight";                  // Unique device name for this client. For connection to broker 
                                                        // and as a topic name for messages bound for this device. Example: "ESP32_humidity_sensor"
-const IPAddress deviceIP(10, 0, 0, 131);               // Set a static IP address for the client device
+const IPAddress deviceIP(10, 0, 0, 122);               // Set a static IP address for the client device
 
 // Global Variables
 
@@ -67,11 +67,6 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
     fadeUpR();
     Alarm.delay(10);
     publish("Start Fade");
-  }
-  else if (strcmp(msg, "candle") == 0) {
-    candleOn();
-    Alarm.delay(10);
-    publish("Start Candle");
   }
   else if (strcmp(msg, "down") == 0) {
     manualNeg();
@@ -144,7 +139,35 @@ void wifiSetup() {
   Serial.println("Connected to IP address: ");
   Serial.println(WiFi.localIP());
 }
-  
+
+/**********************************************  WiFiStatusCheck  ************************************************/
+/***********************************************************************************************************/
+
+void wifiStatusCheck() {
+  if ( WiFi.status() ==  WL_CONNECTED ) 
+  {
+    exit;
+  } else
+  {
+    // wifi down, reconnect here
+   WiFi.begin(  );
+    int WLcount = 0;
+    int UpCount = 0;
+    while (WiFi.status() != WL_CONNECTED && WLcount < 200 ) 
+    {
+      Alarm.delay( 100 );
+         Serial.printf(".");
+         if (UpCount >= 60)  // just keep terminal from scrolling sideways
+         {
+            UpCount = 0;
+               Serial.printf("\n");
+         }
+         ++UpCount;
+      ++WLcount;
+    }
+  }
+}
+
 /**********************************************  mqttSetup  ************************************************/
 /***********************************************************************************************************/
 
@@ -206,11 +229,5 @@ void publishMan() {
 void publishFade() {
   snprintf(topic, 32, "ToBroker/%s/fadeSet", deviceID);
   snprintf(msg, 64, fadeSet);
-  MQTTclient.publish(topic, msg);
-}
-
-void publishCandle() {
-  snprintf(topic, 32, "ToBroker/%s/candleSet", deviceID);
-  snprintf(msg, 64, candleSet);
   MQTTclient.publish(topic, msg);
 }
