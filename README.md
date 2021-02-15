@@ -17,6 +17,3 @@ version.
 <br>
 <br>
 <br>
-
-# Options
-If you find MQTT or your wLAN to be too unreliable for use as a morning alarm, please take a look at the [Fail-Safe Branch](https://github.com/Didgeridrew/MQTT-Wake-Up-Light/tree/fail-safe) for a version that can use MQTT, but does not rely on it.
